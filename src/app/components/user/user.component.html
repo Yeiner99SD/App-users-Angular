@@ -1,0 +1,28 @@
+@if (users.length > 0) {
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>email</th>
+                <th>username</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (user of users; track $index) {
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.lastname}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.username}}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} @else {
+    <div class="alert alert-warning">
+        No hay usuarios disponibles
+    </div>
+}
