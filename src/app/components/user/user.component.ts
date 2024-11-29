@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from '../../models/user';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'user',
@@ -18,10 +19,22 @@ export class UserComponent {
 
   onRemoveUser(id: number){
 
-    const confirmRemove = confirm('Estas seguro que desea eliminar')
-    if(confirmRemove){
-      this.idUserEventEmitter.emit(id)  
-    }
+    Swal.fire({
+      title: "Seguro que deseas eliminar usuario?",
+      showDenyButton: true,
+
+      confirmButtonText: "Eliminar",
+      denyButtonText: `Cancelar`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        this.users = this.users.filter(user => user.id != id)
+        this.idUserEventEmitter.emit(id)  
+        Swal.fire("Eliminado!", "", "success");
+      }
+    });
+
+  
   }
 
   onselectedUser(user: User){

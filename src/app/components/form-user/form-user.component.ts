@@ -6,13 +6,15 @@ import { User } from '../../models/user';
   selector: 'form-user',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './form-user.component.html'
+  templateUrl: './form-user.component.html',
+  styleUrl: './form-user.component.css'
 })
 export class FormUserComponent {
   
+
   @Input() user: User;
   @Output() newUserEventEmitter: EventEmitter<User> = new EventEmitter()
-  
+  @Output() openEventEmitter = new EventEmitter
   constructor(){
     this.user = new User()
   }
@@ -28,5 +30,9 @@ export class FormUserComponent {
 
   clearUser() {
    this.user = new User()
+  }
+
+  onOpen(){
+    this.openEventEmitter.emit()
   }
 }

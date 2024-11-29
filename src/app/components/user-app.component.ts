@@ -3,6 +3,7 @@ import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 import { UserComponent } from "./user/user.component";
 import { FormUserComponent } from './form-user/form-user.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'user-app',
@@ -17,6 +18,8 @@ export class UserAppComponent implements OnInit {
   users: User[] = []
 
   userSelected: User
+
+  open: boolean = false
 
   constructor(private service: UserService){
     this.userSelected = new User()
@@ -39,14 +42,26 @@ export class UserAppComponent implements OnInit {
     }else{
       this.users = [... this.users, {... user}]
     }
+    Swal.fire({
+      title: "Guardado",
+      text: "Usuario registrado con exito",
+      icon: "success"
+    })
+
     this.userSelected = new User()
+    this.setOpen()
   }
 
-  removeUser(id: number){
+  removeUser(id: number){   
     this.users = this.users.filter(user => user.id != id)
   }
 
   onSelectedUser(userRow: User){
     this.userSelected = {... userRow}
+    this.open = true
+  }
+
+  setOpen(){
+    this.open = !this.open
   }
 }
