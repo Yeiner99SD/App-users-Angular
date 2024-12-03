@@ -1,29 +1,9 @@
-<div class="container my-4">
-  <h3>{{ title }}</h3>
 
-  <button class="btn btn-primary" (click)="setOpen()">
-    {{ open == true ? "Cerrar" : "Crear usuario" }}
-  </button>
-  <div class="row">
-    <div class="col">
-      <user
-        [users]="users"
-        (idUserEventEmitter)="removeUser($event)"
-        (selectedUserEventEmitter)="onSelectedUser($event)"
-      />
-    </div>
-  </div>
+<app-navbar [users]="users"></app-navbar>
+
+<div class="container my-4">
+  <router-outlet></router-outlet>
+ 
 </div>
 
-@if (open) {
-    <div class="abrir-modal animacion fadeIn">
 
-        <form-user
-          (newUserEventEmitter)="addUser($event)"
-          [user]="userSelected"
-          (openEventEmitter)="setOpen()"
-        />
-    </div>
-
-
-}

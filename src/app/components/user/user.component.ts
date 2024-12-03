@@ -1,43 +1,39 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from '../../models/user';
 import Swal from 'sweetalert2';
+import { Router, RouterModule } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { SharingDataService } from '../../services/sharing-data.service';
 
 @Component({
   selector: 'user',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './user.component.html',
 
 })
 export class UserComponent {
   
-  @Input() users : User[] = []
+  title: string = 'Hola usuarios'
+  users : User[] = []
   
-  @Output() idUserEventEmitter = new EventEmitter()
-
-  @Output() selectedUserEventEmitter = new EventEmitter()
-
-  onRemoveUser(id: number){
-
-    Swal.fire({
-      title: "Seguro que deseas eliminar usuario?",
-      showDenyButton: true,
-
-      confirmButtonText: "Eliminar",
-      denyButtonText: `Cancelar`
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
-        this.users = this.users.filter(user => user.id != id)
-        this.idUserEventEmitter.emit(id)  
-        Swal.fire("Eliminado!", "", "success");
-      }
-    });
-
   
+
+  constructor(private router: Router, private service: UserService, private sharingS: SharingDataService){
+    if( this.router.getCurrentNavigation()?.extras.state){
+      this.users = this.router.getCurrentNavigation()?.extras.state!['users'];
+    } else{
+      this.service.findAll().subscribe(users => this.users = users)
+    }
+  } 
+
+  onRemoveUser(id: number){ 
+
+    this.sharingS.idUserEventEmitter.emit(id)
   }
 
   onselectedUser(user: User){
-    this.selectedUserEventEmitter.emit(user)
+    //this.sharingS.selectedUserEventEmitter.emit(user)
+    this.router.navigate(['/users/edit', user.id], {state: {user}})
   }
 }
