@@ -1,6 +1,6 @@
 
 export class User {
-    id: number = 0
+    id!: number 
     name!: string
     lastname!: string
     email!: string

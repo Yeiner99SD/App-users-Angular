@@ -3,6 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
 import { SharingDataService } from '../../services/sharing-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'form-user',
@@ -15,22 +16,27 @@ export class FormUserComponent  implements OnInit{
   
 
   user: User;
-  
+  errors: any = {};
 
-  constructor(private sharingS: SharingDataService, private route: ActivatedRoute){
+  constructor(private sharingS: SharingDataService, private route: ActivatedRoute, private userS: UserService){
     
     this.user = new User()
     
     
   }
   ngOnInit(): void {
-    this.sharingS.selectUserEventEmitter.subscribe(user => this.user = user);
+    //recoge el id pero del cliente osea angular
+    //this.sharingS.selectUserEventEmitter.subscribe(user => this.user = user);
 
     this.route.paramMap.subscribe(params => {
       const id: number =+ (params.get('id') || '0');
 
       if (id > 0) {
-        this.sharingS.findUserByIdEventEmitter.emit(id);
+        //Esta recoge el id en estado de Angular
+        // this.sharingS.findUserByIdEventEmitter.emit(id);
+
+        //esto trae la info pero directamente desde el servidor backend
+        this.userS.finById(id).subscribe( user => this.user = user)
       }
     });
   }
