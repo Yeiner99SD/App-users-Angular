@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SharingDataService } from '../services/sharing-data.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'user-app',
@@ -17,12 +18,12 @@ export class UserAppComponent implements OnInit {
 
 
   users: User[] = []
-  
+  paginator: any = {}
 
  
 
 
-  constructor(private service: UserService, private sharingS: SharingDataService, private router: Router, private route: ActivatedRoute){
+  constructor(private service: UserService, private sharingS: SharingDataService, private router: Router, private route: ActivatedRoute, private authS: AuthService){
     
   }
 
@@ -38,10 +39,47 @@ export class UserAppComponent implements OnInit {
     this.RemoveUser()
     this.findUserById()
     this.pageUserEvent()
+    this.handlerLogin()
   }
 
+  handlerLogin(){
+    this.sharingS.handlerLoginEventEmitter.subscribe(({username, password}) => {
+      console.log(username+ '' + password)
+      this.authS.loginUser({username, password}).subscribe({
+        next: res => {
+          const token = res.token;
+          console.log(token)
+          const payload = this.authS.getPayload(token)
+          
+          const user = {username: payload.sub}
+          const login = {
+            user,
+            isAuth: true,
+            isAdmin: payload.isAdmin
+          }
+          this.authS.token = token;
+          this.authS.user = login
+          this.router.navigate(['/users/page/0'])
+          console.log(payload)
+          
+        },
+        error: err => {
+          if(err.status == 401 ){
+            console.log(err.error)
+            Swal.fire('Error en la autenticacion', err.error.message , 'error')
+          } else {
+            throw err
+          }
+        }
+      })
+    })
+  }
+ 
   pageUserEvent() {
-    this.sharingS.pageUsersEventEmitter.emit(this.users)
+    this.sharingS.pageUsersEventEmitter.subscribe(pageable => {
+      this.users = pageable.users
+      this.paginator = pageable.paginator
+    })
   }
 
   findUserById() {
@@ -59,28 +97,50 @@ export class UserAppComponent implements OnInit {
         this.service.updateUser(user).subscribe({
           next: (userUpdate) => {
             this.users = this.users.map(u => (u.id == userUpdate.id) ? { ...userUpdate } : u);
-            this.router.navigate(['/users']) ;
+            this.router.navigate(['/users'],{
+              state: {
+                users: this.users,
+                paginator: this.paginator
+              }
+            });
+            Swal.fire({
+              title: "Actualizado",
+              text: "Usuario actualizado con exito",
+              icon: "success"
+            })
         },
           error: (err) => {
-            console.log(err.error)
+            //console.log(err.error)
+            if(err.status == 400){
+              this.sharingS.errorsUserFormEventEmitter.emit(err.error)
+            }
       }})
       } else {
         this.service.createUser(user).subscribe({
-          next: (userNew) => {
+          next: userNew => {
             console.log(userNew)
-            this.users = [...this.users , { ...userNew, }];
-            this.router.navigate(['/users']) ;
+            this.users = [...this.users , { ...userNew }];
+            this.router.navigate(['/users'],
+              { 
+                state:{
+                  users: this.users,
+                  paginator: this.paginator
+                }
+              }
+            ) ;
+            Swal.fire({
+              title: "Guardado!",
+              text: "Usuario guardado con exito!",
+              icon: "success"
+            });
         },
           error: (err) => {
-            console.log(err.error)
+            //console.log(err.error)
+            if (err.status == 400) {
+              this.sharingS.errorsUserFormEventEmitter.emit(err.error);
+            }
           }})
       }
-      
-      Swal.fire({
-        title: "Guardado!",
-        text: "Usuario guardado con exito!",
-        icon: "success"
-      });
     })
   }
   
@@ -101,7 +161,12 @@ export class UserAppComponent implements OnInit {
           
           this.users = this.users.filter(user => user.id != id);
           this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/users']);
+            this.router.navigate(['/users'],{
+              state: {
+                users: this.users,
+                paginator: this.paginator
+              }
+            });
         })
 
           });

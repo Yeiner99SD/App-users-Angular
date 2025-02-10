@@ -26,28 +26,29 @@ export class FormUserComponent  implements OnInit{
   }
   ngOnInit(): void {
     //recoge el id pero del cliente osea angular
-    //this.sharingS.selectUserEventEmitter.subscribe(user => this.user = user);
+    this.sharingS.errorsUserFormEventEmitter.subscribe(errors => this.errors = errors);
+    this.sharingS.selectUserEventEmitter.subscribe(user => this.user = user);
 
     this.route.paramMap.subscribe(params => {
       const id: number =+ (params.get('id') || '0');
 
       if (id > 0) {
         //Esta recoge el id en estado de Angular
-        // this.sharingS.findUserByIdEventEmitter.emit(id);
+        this.sharingS.findUserByIdEventEmitter.emit(id);
 
         //esto trae la info pero directamente desde el servidor backend
-        this.userS.finById(id).subscribe( user => this.user = user)
+        //this.userS.finById(id).subscribe( user => this.user = user)
       }
     });
   }
   
   onSubmit(userForm: NgForm){
-    if(userForm.valid){
+    //if(userForm.valid){
       this.sharingS.newUserEventEmitter.emit(this.user)
       console.log(this.user)
-    }
-    userForm.reset()
-    userForm.resetForm()
+   // }
+    //userForm.reset()
+    //userForm.resetForm()
   }
 
   clearUser(userForm: NgForm) {

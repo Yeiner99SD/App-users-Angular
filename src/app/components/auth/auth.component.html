@@ -1,0 +1,34 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title my-4">
+            Login Page
+        </h5>
+    </div>
+    <div class="card-body">
+        <form (ngSubmit)="onSubmit()">
+            <div class="form-floating mb-3">
+                <input 
+                    id="floatingInput"
+                    name="username"
+                    class="form-control " 
+                    type="text"
+                    placeholder="username"
+                    [(ngModel)]="user.username">  
+                <label for="floatingInput">Email address</label>          
+            </div>
+            <div class="form-floating mb-3">
+                <input 
+                    id="floatingPassword"
+                    name="password"
+                    class="form-control " 
+                    type="password"
+                    placeholder="password"
+                    [(ngModel)]="user.password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="btn btn-primary" type="submit">
+                Login
+            </button>
+        </form>
+    </div>   
+</div>
