@@ -42,7 +42,7 @@ export class UserService {
     return this.http.put<User>(`${this.url}/${user.id}`, user)
   }
 
-  removeUser(id: number): Observable<void>{
-    return this.http.delete<void>(`${this.url}/${id}`)
+  removeUser(id: number): Observable<number>{
+    return this.http.delete<number>(`${this.url}/${id}`)
   }
 }

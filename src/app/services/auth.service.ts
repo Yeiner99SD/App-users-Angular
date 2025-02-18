@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { login, logout } from '../store/auth/auth.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,9 @@ export class AuthService {
 
   private http = inject(HttpClient)
 
-  private _token: string | undefined
+  private router= inject(Router)
+
+  
 
   private _user: any = {
     isAuth: false,
@@ -20,43 +24,33 @@ export class AuthService {
     user: undefined
   }
 
-  private router= inject(Router)
 
 
-  constructor() { }
+  constructor(private store: Store<{auth: any}>) {
+      this.store.select('auth').subscribe(state => {
+        this._user = state
+      })
+   }
 
   loginUser({username, password}: any): Observable<any>{
     return this.http.post<any>(this.url, {username, password})
   }
 
   set user(user: any){
-    this._user = user
     sessionStorage.setItem('login', JSON.stringify(user))
   }
 
   get user(){
-    if(this._user.isAuth){
-      return this._user
-    }else if(sessionStorage.getItem('login') != null){
-      this._user = JSON.parse(sessionStorage.getItem('login') || '{}') 
-      return this._user
-    }
     return this._user
   }
 
   set token(token: string){
-    this._token = token
     sessionStorage.setItem('token', token)
   }
 
-  get token(): any{
-    if(this._token != undefined){
-      return this._token
-    } else if(sessionStorage.getItem('token') != null){
-      this._token = sessionStorage.getItem('token') || ''
-      return this._token
-    }
-    return this._token
+  get token(){
+    return sessionStorage.getItem('token')!
+    
   }
 
   getPayload(token: string){
@@ -75,12 +69,7 @@ export class AuthService {
   }
 
   logout(){
-    this._token = undefined;
-    this._user = {
-      isAuth: false,
-      isAdmin: false,
-      user: undefined
-    }
+    this.store.dispatch(logout())
     sessionStorage.removeItem('login');
     sessionStorage.removeItem('token');
     this.router.navigate(['/users'])

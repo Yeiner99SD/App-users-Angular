@@ -4,17 +4,14 @@ import { User } from '../../models/user';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './navbar.component.html',
-
+    selector: 'app-navbar',
+    standalone: true,
+    imports: [RouterModule],
+    templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {
 
-  @Input() users: User[] = [];
 
-  @Input() paginator = {}
 
   private authS = inject(AuthService)
 
