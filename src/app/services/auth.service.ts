@@ -18,11 +18,8 @@ export class AuthService {
 
   
 
-  private _user: any = {
-    isAuth: false,
-    isAdmin: false,
-    user: undefined
-  }
+  private _user: any 
+   
 
 
 

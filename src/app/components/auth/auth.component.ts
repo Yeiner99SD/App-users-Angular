@@ -2,8 +2,6 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user';
 import Swal from 'sweetalert2';
-import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { login } from '../../store/auth/auth.actions';
 
@@ -17,8 +15,6 @@ import { login } from '../../store/auth/auth.actions';
 export class AuthComponent {
 
   user: User;
-  private authS = inject(AuthService)
-  private router = inject(Router)
   private store = inject(Store<{auth: any}>)
 
   constructor(){

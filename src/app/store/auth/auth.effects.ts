@@ -21,7 +21,6 @@ export class authEffects {
         map(response => {
             const token = response.token;
             const payload = this.service.getPayload(token) 
-            const user = {username: payload.sub}
             const loginData = {
                 user: {username: payload.sub},
                 isAuth: true,
