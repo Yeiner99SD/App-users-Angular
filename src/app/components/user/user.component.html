@@ -4,6 +4,12 @@
     <button class="btn btn-primary my-3" [routerLink]="['/users/create']">Crear Usuario</button>
 }
 
+@if (loading) {
+    <div class="spinner-border text-primary d-block" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+}@else{
+
 
 @if (users.length == 0) {
 <div class="alert alert-warning">No hay registros en el sistema!</div>
@@ -52,3 +58,4 @@
 </table>
 }
 <paginator [paginator]="paginator" [url]="'/users/page'"/>
+}

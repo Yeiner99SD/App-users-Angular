@@ -19,7 +19,7 @@ export class UserComponent implements OnInit {
   title: string = 'Hola usuarios'
   users : User[] = []
   paginator: any = {};
-  
+  loading: boolean = true
   
 
   constructor(
@@ -34,6 +34,7 @@ export class UserComponent implements OnInit {
     this.store.select('users').subscribe(state => {
       this.users =state.users,
       this.paginator = state.paginator
+      this.loading = state.loading
     })
 
   } 
